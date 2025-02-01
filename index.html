@@ -1,0 +1,679 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ร้านทีวีออนไลน์</title>
+    <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Prompt', sans-serif;
+        }
+
+        body {
+            background-color: #f8f9fa;
+        }
+
+        /* Header */
+        .header {
+            background: linear-gradient(135deg, #2b5876 0%, #4e4376 100%);
+            padding: 15px;
+            position: fixed;
+            width: 100%;
+            top: 0;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            z-index: 100;
+            color: white;
+        }
+
+        .header h1 {
+            font-weight: 600;
+            font-size: 1.2rem;
+            margin-bottom: 10px;
+        }
+
+        .search-container {
+            position: relative;
+        }
+
+        .search-bar {
+            width: 100%;
+            padding: 12px 45px 12px 20px;
+            border: none;
+            border-radius: 30px;
+            font-size: 16px;
+            background: rgba(255,255,255,0.9);
+        }
+
+        .search-icon {
+            position: absolute;
+            right: 20px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #4e4376;
+        }
+
+        /* Product Grid */
+        .container {
+            margin-top: 140px;
+            padding: 0 15px 80px;
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 20px;
+        }
+
+        .tv-item {
+            background: white;
+            border-radius: 15px;
+            padding: 15px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+            transition: transform 0.2s;
+        }
+
+        .tv-item:hover {
+            transform: translateY(-5px);
+        }
+
+        .tv-image {
+            width: 100%;
+            height: 200px;
+            border-radius: 10px;
+            object-fit: cover;
+            margin-bottom: 15px;
+        }
+
+        .tv-badge {
+            background: #e91e63;
+            color: white;
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            margin-bottom: 10px;
+            display: inline-block;
+        }
+
+        .tv-title {
+            color: #2b5876;
+            margin-bottom: 8px;
+            font-weight: 600;
+            font-size: 1.2rem;
+        }
+
+        .tv-specs {
+            color: #6c757d;
+            margin-bottom: 10px;
+            font-size: 0.9rem;
+            line-height: 1.4;
+        }
+
+        .tv-price {
+            color: #e91e63;
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin: 15px 0;
+        }
+
+        .add-to-cart {
+            background: linear-gradient(135deg, #4e4376 0%, #2b5876 100%);
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 25px;
+            cursor: pointer;
+            width: 100%;
+            font-weight: 500;
+            transition: transform 0.2s;
+        }
+
+        .add-to-cart:hover {
+            transform: scale(1.02);
+        }
+
+        /* Cart */
+        .cart-icon {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            background: linear-gradient(135deg, #e91e63 0%, #ff6b6b 100%);
+            color: white;
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 8px 25px rgba(233,30,99,0.3);
+            cursor: pointer;
+            z-index: 1000;
+        }
+
+        .cart-count {
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            background: #2b5876;
+            color: white;
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            font-size: 0.8rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 2px solid white;
+        }
+
+        .cart-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: 2000;
+        }
+
+        .cart-content {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: white;
+            border-radius: 20px 20px 0 0;
+            padding: 25px;
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+
+        .cart-item {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            padding: 15px 0;
+            border-bottom: 1px solid #eee;
+        }
+
+        .cart-item img {
+            width: 80px;
+            height: 80px;
+            border-radius: 10px;
+            object-fit: cover;
+        }
+
+        .quantity-control {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        .quantity-btn {
+            background: #2b5876;
+            color: white;
+            border: none;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            cursor: pointer;
+        }
+
+        .remove-btn {
+            background: #e91e63;
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 20px;
+            cursor: pointer;
+        }
+
+        .total-price {
+            font-size: 1.3rem;
+            font-weight: 600;
+            color: #2b5876;
+            margin-top: 20px;
+            text-align: right;
+        }
+
+        /* Checkout Form */
+        .checkout-form {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: 2000;
+        }
+
+        .checkout-content {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: white;
+            border-radius: 20px 20px 0 0;
+            padding: 25px;
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            color: #4e4376;
+            font-weight: 500;
+        }
+
+        .form-group input,
+        .form-group textarea {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 10px;
+            font-size: 16px;
+        }
+
+        .submit-btn {
+            background: linear-gradient(135deg, #4e4376 0%, #2b5876 100%);
+            color: white;
+            border: none;
+            padding: 15px 25px;
+            border-radius: 25px;
+            cursor: pointer;
+            width: 100%;
+            font-weight: 500;
+            margin-top: 20px;
+        }
+
+        .close-btn {
+            position: absolute;
+            top: 15px;
+            right: 20px;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: #6c757d;
+        }
+  
+        /* เพิ่มสไตล์สำหรับสรุปการสั่งซื้อ */
+.order-summary-modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.5);
+    z-index: 2000;
+}
+
+.order-item {
+    padding: 15px;
+    border-bottom: 1px solid #eee;
+    margin-bottom: 10px;
+}
+
+.order-time {
+    color: #6c757d;
+    font-size: 0.9rem;
+    margin-bottom: 20px;
+}
+
+.bank-details {
+    background: #f8f9fa;
+    padding: 15px;
+    border-radius: 10px;
+    margin: 15px 0;
+}
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1><i class="fas fa-tv"></i> หนึ่ง ร่อนพิบูลย์ อิเล็กทรอนิกส์</h1>
+        <div class="search-container">
+            <input type="text" class="search-bar" placeholder="ค้นหาทีวี..." id="searchInput">
+            <i class="fas fa-search search-icon"></i>
+        </div>
+    </div>
+
+    <div class="container" id="tvContainer"></div>
+
+    <div class="cart-icon" onclick="showCart()">
+        <i class="fas fa-shopping-cart"></i>
+        <div class="cart-count" id="cartCount">0</div>
+    </div>
+
+    <!-- Cart Modal -->
+    <div class="cart-modal" id="cartModal">
+        <div class="cart-content">
+            <span class="close-btn" onclick="closeCart()">&times;</span>
+            <h2>ตะกร้าสินค้า (<span id="cartTotal">0</span> ชิ้น)</h2>
+            <div id="cartItems"></div>
+            <div class="total-price">รวมทั้งหมด: ฿<span id="totalPrice">0</span></div>
+            <button class="submit-btn" onclick="showCheckoutForm()">ชำระเงิน</button>
+        </div>
+    </div>
+
+    <!-- Checkout Form -->
+    <!-- ในส่วน Checkout Form ให้แก้ไขเป็น -->
+<div class="checkout-form" id="checkoutForm">
+    <div class="checkout-content">
+        <span class="close-btn" onclick="closeCheckout()">&times;</span>
+        <h2>ข้อมูลการจัดส่งและชำระเงิน</h2>
+        <form id="checkoutForm" onsubmit="showOrderSummary(event)">
+            <!-- ส่วนข้อมูลเดิม -->
+            <div class="form-group">
+                <label>ชื่อ-นามสกุล:</label>
+                <input type="text" required id="fullName">
+            </div>
+            <div class="form-group">
+                <label>เบอร์โทรศัพท์:</label>
+                <input type="tel" required id="phone">
+            </div>
+            <div class="form-group">
+                <label>ที่อยู่จัดส่ง:</label>
+                <textarea rows="4" required id="address"></textarea>
+            </div>
+
+            <!-- เพิ่มส่วนข้อมูลธนาคาร -->
+            <div class="bank-info" style="background: #f8f9fa; padding: 20px; border-radius: 15px; margin: 20px 0;">
+                <h3>ข้อมูลบัญชีธนาคาร</h3>
+                <p>ธนาคาร: กสิกรไทย</p>
+                <p>เลขบัญชี: 448-035-1594</p>
+                <p>ชื่อบัญชี: นรากร หิรัญธานี</p>
+                
+                <div class="form-group" style="margin-top:15px">
+                    <label>อัปโหลดสลิปโอนเงิน (รูปภาพ):</label>
+                    <input type="file" accept="image/*" required id="slipUpload">
+                </div>
+            </div>
+
+            <!-- เพิ่มลิงก์ติดต่อ LINE -->
+            <div class="line-contact" style="text-align:center; margin:20px 0">
+                <a href="https://line.me/ti/p/~@tvonline" target="_blank" style="text-decoration:none">
+                    <button type="button" class="submit-btn" style="background:linear-gradient(135deg, #06C755 0%, #06C755 100%)">
+                        <i class="fab fa-line"></i> ติดต่อทาง LINE
+                    </button>
+                </a>
+            </div>
+
+            <button type="submit" class="submit-btn">สั่งซื้อและยืนยันการโอน</button>
+        </form>
+    </div>
+</div>
+
+<!-- เพิ่มส่วนสรุปการสั่งซื้อ -->
+<div class="order-summary-modal" id="orderSummary">
+    <div class="checkout-content">
+        <span class="close-btn" onclick="closeOrderSummary()">&times;</span>
+        <h2>สรุปการสั่งซื้อ</h2>
+        <div id="orderDetails"></div>
+    </div>
+</div>
+
+    <script>
+        // ข้อมูลสินค้า
+        const tvData = [
+    {
+        id: 1,
+        name: "Samsung QLED 4K 55 นิ้ว",
+        price: 29990,
+        specs: "4K UHD | Smart TV | HDR | 3 HDMI Ports | Quantum Dot Technology",
+        image: "tv.jpeg",
+        isNew: true,
+        brand: "Samsung",
+        screenSize: "55 นิ้ว",
+        resolution: "3840 x 2160",
+        refreshRate: "120Hz",
+        smartFeatures: ["Netflix", "YouTube", "Apple TV"],
+        warranty: "2 ปี"
+    },
+    {
+        id: 2,
+        name: "LG OLED 65 นิ้ว",
+        price: 49990,
+        specs: "OLED 4K | AI ThinQ | Dolby Vision | 120Hz | α9 Gen 4 Processor",
+        image: "https://via.placeholder.com/400x300/4e4376/fff?text=LG",
+        isNew: false,
+        brand: "LG",
+        screenSize: "65 นิ้ว",
+        resolution: "3840 x 2160",
+        refreshRate: "120Hz",
+        smartFeatures: ["Netflix", "Disney+", "Google Assistant"],
+        warranty: "2 ปี"
+    },
+    {
+        id: 3,
+        name: "Sony Bravia XR 75 นิ้ว",
+        price: 79990,
+        specs: "4K HDR | Cognitive Processor XR | Dolby Atmos | IMAX Enhanced",
+        image: "https://via.placeholder.com/400x300/2b5876/fff?text=Sony",
+        isNew: true,
+        brand: "Sony",
+        screenSize: "75 นิ้ว",
+        resolution: "3840 x 2160",
+        refreshRate: "120Hz",
+        smartFeatures: ["Netflix", "Prime Video", "Apple AirPlay"],
+        warranty: "3 ปี"
+    },
+    {
+        id: 4,
+        name: "TCL Mini LED 55 นิ้ว",
+        price: 24990,
+        specs: "4K UHD | Mini LED | Dolby Vision | HDR10+ | 120Hz",
+        image: "https://via.placeholder.com/400x300/4e4376/fff?text=TCL",
+        isNew: false,
+        brand: "TCL",
+        screenSize: "55 นิ้ว",
+        resolution: "3840 x 2160",
+        refreshRate: "120Hz",
+        smartFeatures: ["Netflix", "YouTube", "Google TV"],
+        warranty: "2 ปี"
+    },
+    {
+        id: 5,
+        name: "Panasonic OLED 48 นิ้ว",
+        price: 34990,
+        specs: "4K HDR | HCX Pro AI Processor | Dolby Vision | Filmmaker Mode",
+        image: "https://via.placeholder.com/400x300/2b5876/fff?text=Panasonic",
+        isNew: true,
+        brand: "Panasonic",
+        screenSize: "48 นิ้ว",
+        resolution: "3840 x 2160",
+        refreshRate: "120Hz",
+        smartFeatures: ["Netflix", "Prime Video", "Apple AirPlay"],
+        warranty: "2 ปี"
+    }
+];
+
+        let cart = JSON.parse(localStorage.getItem('cart')) || [];
+
+        // แสดงสินค้า
+        function renderProducts() {
+    const container = document.getElementById('tvContainer');
+    container.innerHTML = tvData.map(tv => `
+        <div class="tv-item">
+            ${tv.isNew ? '<div class="tv-badge">ใหม่!</div>' : ''}
+            <img src="${tv.image}" class="tv-image" alt="${tv.name}">
+            <h2 class="tv-title">${tv.name}</h2>
+            <p class="tv-specs">${tv.specs}</p>
+            <div class="tv-details">
+                <p><strong>แบรนด์:</strong> ${tv.brand}</p>
+                <p><strong>ขนาดหน้าจอ:</strong> ${tv.screenSize}</p>
+                <p><strong>ความละเอียด:</strong> ${tv.resolution}</p>
+                <p><strong>อัตรารีเฟรช:</strong> ${tv.refreshRate}</p>
+                <p><strong>ฟีเจอร์สมาร์ท:</strong> ${tv.smartFeatures.join(", ")}</p>
+                <p><strong>การรับประกัน:</strong> ${tv.warranty}</p>
+            </div>
+            <p class="tv-price">฿${tv.price.toLocaleString()}</p>
+            <button class="add-to-cart" onclick="addToCart(${tv.id})">
+                <i class="fas fa-cart-plus"></i> เพิ่มในตะกร้า
+            </button>
+        </div>
+    `).join('');
+}
+
+        // เพิ่มสินค้าลงตะกร้า
+        function addToCart(productId) {
+            const product = tvData.find(p => p.id === productId);
+            const existingItem = cart.find(item => item.id === productId);
+            
+            if (existingItem) {
+                existingItem.quantity++;
+            } else {
+                cart.push({ ...product, quantity: 1 });
+            }
+            
+            updateCart();
+        }
+
+        // อัพเดทตะกร้า
+        function updateCart() {
+            localStorage.setItem('cart', JSON.stringify(cart));
+            document.getElementById('cartCount').textContent = cart.reduce((sum, item) => sum + item.quantity, 0);
+            renderCartItems();
+        }
+
+        // แสดงตะกร้าสินค้า
+        function renderCartItems() {
+            const container = document.getElementById('cartItems');
+            const totalItems = cart.reduce((sum, item) => sum + item.quantity, 0);
+            const totalPrice = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+            
+            container.innerHTML = cart.map(item => `
+                <div class="cart-item">
+                    <img src="${item.image}" alt="${item.name}">
+                    <div style="flex:1">
+                        <h3>${item.name}</h3>
+                        <p>฿${item.price.toLocaleString()}</p>
+                        <div class="quantity-control">
+                            <button class="quantity-btn" onclick="adjustQuantity(${item.id}, -1)">-</button>
+                            <span>${item.quantity}</span>
+                            <button class="quantity-btn" onclick="adjustQuantity(${item.id}, 1)">+</button>
+                        </div>
+                    </div>
+                    <button class="remove-btn" onclick="removeItem(${item.id})">
+                        <i class="fas fa-trash"></i>
+                    </button>
+                </div>
+            `).join('');
+
+            document.getElementById('cartTotal').textContent = totalItems;
+            document.getElementById('totalPrice').textContent = totalPrice.toLocaleString();
+        }
+
+        // ปรับจำนวนสินค้า
+        function adjustQuantity(productId, delta) {
+            const item = cart.find(item => item.id === productId);
+            item.quantity += delta;
+            
+            if (item.quantity < 1) {
+                cart = cart.filter(item => item.id !== productId);
+            }
+            
+            updateCart();
+        }
+
+        // ลบสินค้า
+        function removeItem(productId) {
+            cart = cart.filter(item => item.id !== productId);
+            updateCart();
+        }
+
+        // แสดงตะกร้า
+        function showCart() {
+            document.getElementById('cartModal').style.display = 'block';
+        }
+
+        // ปิดตะกร้า
+        function closeCart() {
+            document.getElementById('cartModal').style.display = 'none';
+        }
+
+        // แสดงฟอร์มชำระเงิน
+        function showCheckoutForm() {
+            closeCart();
+            document.getElementById('checkoutForm').style.display = 'block';
+        }
+
+        // ปิดฟอร์มชำระเงิน
+        function closeCheckout() {
+            document.getElementById('checkoutForm').style.display = 'none';
+        }
+
+        // แสดงสรุปการสั่งซื้อ
+        // แก้ไขฟังก์ชัน showOrderSummary
+function showOrderSummary(event) {
+    event.preventDefault();
+    
+    // เก็บข้อมูลจากฟอร์ม
+    const orderData = {
+        name: document.getElementById('fullName').value,
+        phone: document.getElementById('phone').value,
+        address: document.getElementById('address').value,
+        slip: document.getElementById('slipUpload').files[0]?.name || 'ยังไม่อัปโหลด',
+        timestamp: new Date().toLocaleString(),
+        items: [...cart],
+        total: cart.reduce((sum, item) => sum + (item.price * item.quantity), 0)
+    };
+
+    // สร้างเนื้อหาสรุปการสั่งซื้อ
+    // สร้างเนื้อหาสรุปการสั่งซื้อ
+    const orderContent = `
+        <div class="order-time">เวลาสั่งซื้อ: ${orderData.timestamp}</div>
+        
+        <h3>ข้อมูลผู้สั่งซื้อ</h3>
+        <div class="order-item">
+            <p><strong>ชื่อ-นามสกุล:</strong> ${orderData.name}</p>
+            <p><strong>เบอร์โทรศัพท์:</strong> ${orderData.phone}</p>
+            <p><strong>ที่อยู่จัดส่ง:</strong> ${orderData.address}</p>
+        </div>
+  
+        <h3>รายการสินค้า</h3>
+        ${orderData.items.map(item => `
+            <div class="order-item">
+                <p>${item.name} (จำนวน ${item.quantity} ชิ้น)</p>
+                <p>ราคารวม: ฿${(item.price * item.quantity).toLocaleString()}</p>
+            </div>
+        `).join('')}
+
+        <div class="bank-details">
+            <h3>ข้อมูลการโอนเงิน</h3>
+            
+            <p>สลิปโอนเงิน: ${orderData.slip}</p>
+            <p>กรุณาโอนเงินภายใน 24 ชั่วโมง</p>
+        </div>
+
+        <div class="total-price">รวมทั้งหมด: ฿${orderData.total.toLocaleString()}</div>
+    `;
+
+    // แสดงผลลัพธ์
+    document.getElementById('orderDetails').innerHTML = orderContent;
+    document.getElementById('checkoutForm').style.display = 'none';
+    document.getElementById('orderSummary').style.display = 'block';
+    
+    // เคลียร์ตะกร้า
+    cart = [];
+    updateCart();
+}
+
+// เพิ่มฟังก์ชันปิดหน้าสรุป
+function closeOrderSummary() {
+    document.getElementById('orderSummary').style.display = 'none';
+}
+
+        // เริ่มต้นทำงาน
+        renderProducts();
+        updateCart();
+    </script>
+</body>
+</html>
